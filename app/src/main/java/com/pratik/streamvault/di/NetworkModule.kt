@@ -2,11 +2,14 @@ package com.pratik.streamvault.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.pratik.streamvault.data.remote.AuthApi
+import com.pratik.streamvault.data.remote.FileApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -28,7 +31,7 @@ object NetworkModule  {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        context: Context
+        @ApplicationContext context: Context
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(ChuckerInterceptor(context)) // Debug HTTP calls
@@ -42,10 +45,24 @@ object NetworkModule  {
         moshi: Moshi
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://dummy.base.url/") // ✅ Set actual later
+            .baseUrl("http://192.168.10.34:3000/") // ✅ Set actual later
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
+    }
+
+    // Auth API
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
+
+    // File API
+    @Provides
+    @Singleton
+    fun provideFileApi(retrofit: Retrofit): FileApi {
+        return retrofit.create(FileApi::class.java)
     }
 
 }

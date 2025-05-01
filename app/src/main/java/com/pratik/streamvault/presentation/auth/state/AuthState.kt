@@ -1,4 +1,4 @@
-package com.pratik.streamvault.presentation
+package com.pratik.streamvault.presentation.auth.state
 
 sealed class AuthState {
     object Idle : AuthState()

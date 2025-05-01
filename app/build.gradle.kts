@@ -77,4 +77,22 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+    //Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+
+    //SDP and SSP
+    implementation("com.intuit.sdp:sdp-android:1.1.1")
+    implementation("com.intuit.ssp:ssp-android:1.1.1")
+
+    //DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.5")
+
+    //Epoxy
+    implementation("com.airbnb.android:epoxy:5.1.4")
+    ksp("com.airbnb.android:epoxy-processor:5.1.4")
+    implementation ("com.airbnb.android:epoxy-databinding:5.1.4")
+
 }

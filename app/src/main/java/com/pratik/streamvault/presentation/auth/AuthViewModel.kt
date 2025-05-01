@@ -1,11 +1,13 @@
-package com.pratik.streamvault.presentation
+package com.pratik.streamvault.presentation.auth
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pratik.streamvault.data.local.UserPreferences
 import com.pratik.streamvault.data.remote.dto.LoginRequest
 import com.pratik.streamvault.data.remote.dto.SignupRequest
+import com.pratik.streamvault.presentation.auth.state.AuthState
 import com.pratik.streamvault.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -26,10 +28,11 @@ class AuthViewModel @Inject constructor(
             try {
                 val response = authRepository.login(LoginRequest(email, password))
                 _authState.value = AuthState.Success(response.token)
-                Timber.d("Login success: ${response.token}")
+
+                Timber.Forest.d("Login success: ${response.token}")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error")
-                Timber.e("Login failed: ${e.message}")
+                Timber.Forest.e("Login failed: ${e.message}")
             }
         }
     }
@@ -41,11 +44,11 @@ class AuthViewModel @Inject constructor(
                 val response = authRepository.signup(SignupRequest(email, password))
                 _authState.value = AuthState.Success(response.token)
 
-                Timber.d("Signup success: ${response.token}")
+                Timber.Forest.d("Signup success: ${response.token}")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error")
 
-                Timber.e("Signup failed: ${e.message}")
+                Timber.Forest.e("Signup failed: ${e.message}")
             }
         }
     }
