@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
@@ -10,10 +11,14 @@
         android:label="Splash" >
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_splashFragment_to_dashboardFragment"
-            app:destination="@id/dashboardFragment" />
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -22,7 +27,9 @@
         android:label="Login" >
         <action
             android:id="@+id/action_loginFragment_to_dashboardFragment"
-            app:destination="@id/dashboardFragment" />
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
@@ -32,6 +39,14 @@
         <action
             android:id="@+id/action_dashboardFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.pratik.streamvault.presentation.SignupFragment"
+        android:label="fragment_signup"
+        tools:layout="@layout/fragment_signup" />
 
 </navigation>

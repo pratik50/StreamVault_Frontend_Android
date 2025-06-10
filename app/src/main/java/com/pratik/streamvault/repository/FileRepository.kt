@@ -1,15 +1,78 @@
 package com.pratik.streamvault.repository
 
+import android.content.Context
+import android.net.Uri
+import android.provider.OpenableColumns
 import com.pratik.streamvault.data.remote.FileApi
 import com.pratik.streamvault.data.remote.dto.FilesResponse
+import com.pratik.streamvault.data.remote.dto.ShareResponse
+import com.pratik.streamvault.data.remote.dto.UploadFileResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
+import java.io.IOException
 
 class FileRepository @Inject constructor(
-    val fileApi: FileApi
+    val fileApi: FileApi,
+    @ApplicationContext private val context: Context
 ) {
 
     suspend fun getFiles(): FilesResponse {
         return fileApi.getFiles()
     }
 
+    suspend fun uploadFile(file: MultipartBody.Part): UploadFileResponse {
+        return fileApi.uploadFile(file)
+    }
+
+    suspend fun deleteFile(fileId: String): Boolean {
+        return try {
+            fileApi.deleteFile(fileId)
+            true
+        } catch (e: Exception) {
+            Timber.e("Delete error: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun generateShareLink(fileId: String): ShareResponse {
+        return fileApi.generateShareLink(fileId)
+    }
+
+
+    /*
+    suspend fun downloadFile(fileId: String): FilesResponse {
+        return fileApi.downloadFile(fileId)
+    }*/
+
+    // TODO: remove the complexity for this function and make it more readable
+    suspend fun prepareFilePart(partName: String, fileUri: Uri): MultipartBody.Part =
+        withContext(Dispatchers.IO) {
+            val contentResolver = context.contentResolver
+            // Get the MIME type dynamically
+            val mimeType = contentResolver.getType(fileUri)
+                ?: throw IllegalArgumentException("Cannot determine MIME type for file")
+            // Verify that the MIME type is an image
+            if (!mimeType.startsWith("image/")) {
+                throw IllegalArgumentException("Selected file is not an image")
+            }
+            // Get the file name
+            val fileName = contentResolver.query(fileUri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                cursor.moveToFirst()
+                cursor.getString(nameIndex)
+            } ?: "image_${System.currentTimeMillis()}"
+            // Open input stream
+            val inputStream = contentResolver.openInputStream(fileUri)
+                ?: throw IOException("Invalid file URI")
+            val bytes = inputStream.readBytes()
+            inputStream.close()
+            val requestFile = bytes.toRequestBody(mimeType.toMediaTypeOrNull())
+            MultipartBody.Part.createFormData(partName, fileName, requestFile)
+        }
 }

@@ -3,6 +3,7 @@ package com.pratik.streamvault.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.pratik.streamvault.data.remote.AuthApi
+import com.pratik.streamvault.data.remote.AuthInterceptor
 import com.pratik.streamvault.data.remote.FileApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -31,10 +32,12 @@ object NetworkModule  {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        authInterceptor: AuthInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(ChuckerInterceptor(context)) // Debug HTTP calls
+            .addInterceptor(authInterceptor)
+            .addInterceptor(ChuckerInterceptor(context))
             .build()
     }
 
@@ -45,7 +48,7 @@ object NetworkModule  {
         moshi: Moshi
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.10.34:3000/") // ✅ Set actual later
+            .baseUrl("http://192.168.10.35:3000/")
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -64,5 +67,4 @@ object NetworkModule  {
     fun provideFileApi(retrofit: Retrofit): FileApi {
         return retrofit.create(FileApi::class.java)
     }
-
 }

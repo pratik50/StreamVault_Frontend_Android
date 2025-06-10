@@ -2,8 +2,12 @@ package com.pratik.streamvault.data.local
 
 import android.content.Context
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
+import jakarta.inject.Inject
 
-class UserPreferences(context: Context) {
+class UserPreferences @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     private val prefs = context.getSharedPreferences("streamvault_prefs", Context.MODE_PRIVATE)
 

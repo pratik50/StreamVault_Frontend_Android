@@ -13,10 +13,4 @@ import jakarta.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object LocalModule {
 
-    @Provides
-    @Singleton
-    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
-        return UserPreferences(context)
-    }
-
 }
