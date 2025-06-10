@@ -42,10 +42,30 @@
         <action
             android:id="@+id/action_dashboardFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_filePreviewFragment"
+            app:destination="@id/filePreviewFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/filePreviewFragment"
+        android:name="com.pratik.streamvault.presentation.FileViewerFragment"
+        android:label="File Preview">
+        <argument
+            android:name="fileUrl"
+            app:argType="string" />
+        <argument
+            android:name="mimeType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_filePreviewFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+
+
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.pratik.streamvault.presentation.SignupFragment"
+        android:name="com.pratik.streamvault.presentation.auth.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" />
 

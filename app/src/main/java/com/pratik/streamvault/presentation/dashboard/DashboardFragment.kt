@@ -3,23 +3,17 @@ package com.pratik.streamvault.presentation.dashboard
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -173,16 +167,13 @@ class DashboardFragment : Fragment() {
 
         //File menu listener & controller
         epoxyController.clickListener = object : FileItemClickListener {
-            override fun onDelete(fileId: String) {
-                viewmodel.deleteFile(fileId)
+            override fun onMoreClick(fileId: String) {
+                showFileOptionsBottomSheet(fileId)
             }
-
-            override fun onDownload(fileId: String) {
-                //viewmodel.downloadFile(fileId::fileUrl, fileId::fileName, requireContext())
-            }
-
-            override fun onShare(fileId: String) {
-                viewmodel.generateShareLink(fileId)
+            override fun onFileClick(fileUrl: String, mimeType: String) {
+                val action = DashboardFragmentDirections
+                    .actionDashboardFragmentToFilePreviewFragment(fileUrl, mimeType)
+                findNavController().navigate(action)
             }
         }
 
@@ -221,7 +212,7 @@ class DashboardFragment : Fragment() {
 
         uploadButton?.setOnClickListener {
             val intent = FileFolderPickerUtils.getImagePickerIntent()
-            filePickerLauncher.launch(intent.type)
+            filePickerLauncher.launch(intent)
             dialog.dismiss()
         }
 
@@ -234,10 +225,42 @@ class DashboardFragment : Fragment() {
 
     }
 
+    private fun showFileOptionsBottomSheet(fileId: String) {
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_item_menu, null)
+
+        val deleteBtn = view.findViewById<LinearLayout>(R.id.item_delete)
+        val downloadBtn = view.findViewById<LinearLayout>(R.id.item_download)
+        val shareBtn = view.findViewById<LinearLayout>(R.id.item_share)
+
+        deleteBtn.setOnClickListener {
+            viewmodel.deleteFile(fileId)
+            dialog.dismiss()
+        }
+
+        downloadBtn.setOnClickListener {
+            // viewmodel.downloadFile(fileId)
+            dialog.dismiss()
+        }
+
+        shareBtn.setOnClickListener {
+            viewmodel.generateShareLink(fileId)
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
     // FileManager launcher
-    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            viewmodel.uploadFile(it)
+    private val filePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val uri = result.data?.data
+        if (uri != null) {
+            viewmodel.uploadFile(uri)
+        } else {
+            Toast.makeText(requireContext(), "No file selected", Toast.LENGTH_SHORT).show()
         }
     }
 

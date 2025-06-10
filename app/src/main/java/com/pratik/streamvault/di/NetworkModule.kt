@@ -5,6 +5,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.pratik.streamvault.data.remote.AuthApi
 import com.pratik.streamvault.data.remote.AuthInterceptor
 import com.pratik.streamvault.data.remote.FileApi
+import com.pratik.streamvault.utils.NetworkConstants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -48,7 +49,7 @@ object NetworkModule  {
         moshi: Moshi
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.10.35:3000/")
+            .baseUrl(NetworkConstants.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

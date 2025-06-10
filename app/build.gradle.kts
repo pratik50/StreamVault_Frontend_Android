@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -95,5 +96,8 @@ dependencies {
     implementation("com.airbnb.android:epoxy:5.1.4")
     ksp("com.airbnb.android:epoxy-processor:5.1.4")
     implementation ("com.airbnb.android:epoxy-databinding:5.1.4")
+
+    //Glide
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
 }

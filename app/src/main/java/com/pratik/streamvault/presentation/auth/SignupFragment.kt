@@ -1,6 +1,5 @@
-package com.pratik.streamvault.presentation
+package com.pratik.streamvault.presentation.auth
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

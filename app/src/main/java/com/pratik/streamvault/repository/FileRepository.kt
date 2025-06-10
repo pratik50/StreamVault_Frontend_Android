@@ -53,25 +53,37 @@ class FileRepository @Inject constructor(
     // TODO: remove the complexity for this function and make it more readable
     suspend fun prepareFilePart(partName: String, fileUri: Uri): MultipartBody.Part =
         withContext(Dispatchers.IO) {
+
             val contentResolver = context.contentResolver
-            // Get the MIME type dynamically
+
+            // Determine mime type
             val mimeType = contentResolver.getType(fileUri)
                 ?: throw IllegalArgumentException("Cannot determine MIME type for file")
-            // Verify that the MIME type is an image
-            if (!mimeType.startsWith("image/")) {
-                throw IllegalArgumentException("Selected file is not an image")
+
+            // ✅ Allow image, video, and PDF
+            val isValidType = mimeType.startsWith("image/")
+                    || mimeType.startsWith("video/")
+                    || mimeType == "application/pdf"
+
+            if (!isValidType) {
+                throw IllegalArgumentException("Only image, video, or PDF files are allowed")
             }
-            // Get the file name
+
+            // Get file name
             val fileName = contentResolver.query(fileUri, null, null, null, null)?.use { cursor ->
                 val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 cursor.moveToFirst()
                 cursor.getString(nameIndex)
-            } ?: "image_${System.currentTimeMillis()}"
+            } ?: "file_${System.currentTimeMillis()}"
+
+
             // Open input stream
             val inputStream = contentResolver.openInputStream(fileUri)
                 ?: throw IOException("Invalid file URI")
+
             val bytes = inputStream.readBytes()
             inputStream.close()
+
             val requestFile = bytes.toRequestBody(mimeType.toMediaTypeOrNull())
             MultipartBody.Part.createFormData(partName, fileName, requestFile)
         }

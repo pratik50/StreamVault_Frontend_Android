@@ -19,13 +19,13 @@ class DashboardEpoxyController : EpoxyController() {
         files.forEach { file ->
             ItemFileModel(
                 fileNameValue = file.name,
-
                 fileSizeValue = if (file.size < 1024 * 1024) {
                     "${file.size / 1024} KB"
                 } else {
                     "%.2f MB".format(file.size / 1024f / 1024f)
                 },
-
+                fileUrl = file.url,
+                fileType = file.type,
                 fileId = file.id,
                 clickListener = clickListener
             ).id(file.url).addTo(this)

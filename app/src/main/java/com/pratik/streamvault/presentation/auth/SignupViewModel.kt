@@ -1,4 +1,4 @@
-package com.pratik.streamvault.presentation
+package com.pratik.streamvault.presentation.auth
 
 import androidx.lifecycle.ViewModel
 
