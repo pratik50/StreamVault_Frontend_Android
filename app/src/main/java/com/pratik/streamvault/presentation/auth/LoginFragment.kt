@@ -64,9 +64,13 @@ class LoginFragment : Fragment() {
             }
         }
 
+        binding.forgotEmail.setOnClickListener {
+            // Handle forgot email click
+        }
+
         binding.btnLogin.setOnClickListener {
-            val email = binding.inputEmail.text.toString()
-            val password = binding.inputPassword.text.toString()
+            val email = binding.emailInput.text.toString()
+            val password = binding.passwordInput.text.toString()
             viewModel.login(email, password)
         }
 

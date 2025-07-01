@@ -1,6 +1,8 @@
 package com.pratik.streamvault.presentation
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.pratik.streamvault.R
 import com.pratik.streamvault.data.local.UserPreferences
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashFragment : Fragment() {
@@ -29,15 +30,16 @@ class SplashFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            delay(1000)
 
             val token = userPrefs.getToken()
 
-            if (token.isNullOrEmpty()) {
-                findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
-            } else {
-                findNavController().navigate(R.id.action_splashFragment_to_dashboardFragment)
-            }
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (token.isNullOrEmpty()) {
+                    findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
+                } else {
+                    findNavController().navigate(R.id.action_splashFragment_to_dashboardFragment)
+                }
+            }, 2000)
         }
     }
 }
